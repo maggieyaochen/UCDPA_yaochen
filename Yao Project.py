@@ -1,19 +1,26 @@
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-supermarket_sales = pd.read_csv (r'C:\Users\maggie\Desktop\Python\Project\supermarket_sales - Sheet1.csv')
+import seaborn as sns
+
+# Importing dataset : supermarket_sales - Sheet1.csv
+supermarket_sales = pd.read_csv('supermarket_sales - Sheet1.csv')
 print(supermarket_sales.head())
 print(supermarket_sales.info())
 
+# Using drop_duplicates function to find out how many Branches and in what cities.
 supermarket_city = supermarket_sales[["City",'Branch']]
 print(supermarket_city)
 supermarket_city =supermarket_city.drop_duplicates(subset=["City"])
 print(supermarket_city)
 
+# To check if there is any missing value in the file
 print(supermarket_sales.isna().any())
 
+# To find out highest Total sales
 print(supermarket_sales.sort_values('Total', ascending = False).head().to_string())
 
+# Grouping the product line to see sales quantities in each city to find out min, max and sum
 supermarket_Yangon=supermarket_sales[supermarket_sales["City"]=="Yangon"]
 print(supermarket_Yangon.info())
 print(supermarket_Yangon.groupby('Product line')["Quantity"].agg([min,max,sum]))
@@ -26,6 +33,8 @@ supermarket_Naypyitaw=supermarket_sales[supermarket_sales["City"] == "Naypyitaw"
 print(supermarket_Mandalay.info())
 print(supermarket_Naypyitaw.groupby('Product line')["Quantity"].agg([min,max,sum]))
 
+
+# Create a new list of dicts to visualize the data
 data = [['Yangon','322','263','313','257','371',333],
         ['Mandalay','316','297','270','320','295',322],
         ['Naypyitaw','333','342','369','277','245','265']]
