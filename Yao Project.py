@@ -36,19 +36,66 @@ print(supermarket_Naypyitaw.groupby('Product line')["Quantity"].agg([min,max,sum
 print(supermarket_sales.groupby('Product line')["Quantity"].agg([min,max,sum]))
 
 # Create a new list of dicts to visualize the data
-data = [['Yangon','322','263','313','257','371','333'],
-        ['Mandalay','316','297','270','320','295','322'],
-        ['Naypyitaw','333','342','369','277','245','265'],
-        ['City Total','971','902','952','854','911','920']]
+data = [['Yangon',322,263,313,257,371,333],
+        ['Mandalay',316,297,270,320,295,322],
+        ['Naypyitaw',333,342,369,277,245,265],
+        ['City Total',971,902,952,854,911,920]]
 columns = ['City','Electronic accessories','Fashion accessories','Food and beverages','Health and beauty','Home and lifestyle','Sports and travel']
 supermarket_quantity = pd.DataFrame(data=data, columns=columns)
 print(supermarket_quantity.to_string())
 
-print(supermarket_quantity.reset_index())
+print(supermarket_quantity.info())
 
-supermarket_quantity.reset_index().plot(
-    x="City",y=['Electronic accessories','Fashion accessories','Food and beverages','Health and beauty','Home and lifestyle','Sports and travel'], kind="bar"
+# To view supermarket_quantity in a bar chart
+supermarket_quantity.plot(
+    x="City", y=['Electronic accessories','Fashion accessories','Food and beverages','Health and beauty','Home and lifestyle','Sports and travel'], kind="bar",
 )
-plt.title("Product Type Sales")
+plt.xticks(rotation = 360)
+plt.title("Product Line")
 plt.xlabel("City")
 plt.ylabel("Quantities")
+
+
+# To view gross income by gender
+print(supermarket_sales.head())
+supermarket_gender=supermarket_sales.groupby("Gender")["gross income"].sum()
+print(supermarket_gender)
+
+Total_gross_income=7994+7384
+Female=7994/Total_gross_income
+Male=7384/Total_gross_income
+print(Female)
+print(Male)
+
+# To view gross income by gender and product line
+supermarket_gender=supermarket_sales.groupby(["Gender","Product line"])["gross income"].sum()
+print(supermarket_gender)
+
+supermarket_product=supermarket_sales.groupby(["Product line"])["gross income"].sum()
+print(supermarket_product)
+
+# To view gross income % by gender for each product line
+supermarket_gender=pd.DataFrame({
+    "Female":[1290,1449,1579,883,1430,1360],
+    "Male":[1296,1136,1093,1458,1134,1364],
+
+    }, index=['Electronic accessories','Fashion accessories','Food and beverages','Health and beauty','Home and lifestyle','Sports and travel']
+)
+print(supermarket_gender)
+print(supermarket_gender.info())
+
+stacked_data = supermarket_gender.apply(lambda x: x*100/sum(x), axis=1)
+stacked_data.plot(kind="bar", stacked=True)
+plt.title("Gross income % by Gender for each product line")
+plt.xlabel("Product line")
+plt.ylabel("Percentage of Gross income (%)")
+plt.xticks(rotation = 360)
+plt.show()
+
+Total_grossincome = [2587,2585,2673,2342,2564,2624]
+
+my_labels = 'Electronic accessories','Fashion accessories','Food and beverages','Health and beauty','Home and lifestyle','Sports and travel'
+plt.pie(Total_grossincome,labels=my_labels,autopct='%1.1f%%')
+plt.title('Product line')
+plt.axis('equal')
+plt.show()
