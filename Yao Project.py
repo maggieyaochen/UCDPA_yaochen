@@ -99,3 +99,108 @@ plt.pie(Total_grossincome,labels=my_labels,autopct='%1.1f%%')
 plt.title('Product line')
 plt.axis('equal')
 plt.show()
+
+# To analyse Total sales
+supermarket_total_sales = supermarket_sales[["Branch","City","Date","Time","Total"]]
+print(supermarket_total_sales.head())
+print(supermarket_total_sales.info())
+
+supermarket_total_sales['Date']=pd.to_datetime(supermarket_total_sales['Date'])
+supermarket_total_sales['Time']=pd.to_datetime(supermarket_total_sales['Time'])
+print(supermarket_total_sales.info())
+
+supermarket_total_sales['Year']=supermarket_total_sales['Date'].dt.year
+supermarket_total_sales['Month']=supermarket_total_sales['Date'].dt.month
+supermarket_total_sales['Week']=supermarket_total_sales['Date'].dt.week
+print(supermarket_total_sales.info())
+print(supermarket_total_sales.head())
+
+supermarket_total_sales_month=supermarket_total_sales.groupby(['Branch','Month','Week'])['Total'].sum()
+print(supermarket_total_sales_month)
+
+#To add column 'Mean' to supermarket_tatal_sales
+print(supermarket_total_sales.info())
+supermarket_total_sales['Mean']=supermarket_total_sales.groupby('Week')['Total'].mean()
+print(supermarket_total_sales.info())
+print(supermarket_total_sales.head())
+print(supermarket_total_sales.isna().any())
+supermarket_total_sales=supermarket_total_sales.sort_values('Total')
+print(supermarket_total_sales)
+
+# Drop 'Date' and 'time' to see if still missing value
+supermarket_total_sales=supermarket_total_sales.drop(['Date','Time'], axis='columns', inplace=False)
+print(supermarket_total_sales.info())
+print(supermarket_total_sales.isna().sum())
+
+# Fill missing value with average mean value
+supermarket_total_sales=supermarket_total_sales.fillna(supermarket_total_sales.mean())
+print(supermarket_total_sales.info())
+print(supermarket_total_sales.isna().sum())
+print(supermarket_total_sales.head())
+
+# Grouping total sales by branch and city to get min,max,sun,mean
+
+supermarket_total_sales_week=supermarket_total_sales.groupby(['Branch','Week'])['Total'].agg(['min', 'max','sum','mean'])
+print(supermarket_total_sales_week.info())
+print(supermarket_total_sales_week)
+
+# rename columns
+supermarket_total_sales_week.columns = ['week_min', 'week_max', 'week_sum','week_mean']
+
+# reset index to get grouped columns back
+supermarket_total_sales_week = supermarket_total_sales_week.reset_index()
+
+print(supermarket_total_sales_week.info())
+
+#Supermarket_total_sales_week per branch
+
+supermarket_total_sales_week['Week']=supermarket_total_sales_week['Week'].apply(str)
+supermarket_total_sales_week_A = supermarket_total_sales_week[supermarket_total_sales_week['Branch']=='A']
+print(supermarket_total_sales_week_A)
+supermarket_total_sales_week_B = supermarket_total_sales_week[supermarket_total_sales_week['Branch']=='B']
+print(supermarket_total_sales_week_B)
+supermarket_total_sales_week_C = supermarket_total_sales_week[supermarket_total_sales_week['Branch']=='C']
+print(supermarket_total_sales_week_C)
+
+# View Total Sales by mean, min, max, sum for each branch
+fig, ax = plt.subplots()
+ax.plot(supermarket_total_sales_week_A["Week"], supermarket_total_sales_week_A["week_mean"],marker="o",label="A Yangon")
+ax.plot(supermarket_total_sales_week_B["Week"], supermarket_total_sales_week_B["week_mean"],marker="o", label="B Mandalay")
+ax.plot(supermarket_total_sales_week_C["Week"], supermarket_total_sales_week_C["week_mean"],marker="o", label = "C Naypyitaw")
+ax.set_xlabel(" Week")
+ax.set_ylabel(" Weekly Mean (€)")
+ax.set_title(" Total Sales Per Week by Mean")
+leg = ax.legend()
+plt.show()
+
+fig, ax = plt.subplots()
+ax.plot(supermarket_total_sales_week_A["Week"], supermarket_total_sales_week_A["week_sum"],marker="o",label="A Yangon")
+ax.plot(supermarket_total_sales_week_B["Week"], supermarket_total_sales_week_B["week_sum"],marker="o", label="B Mandalay")
+ax.plot(supermarket_total_sales_week_C["Week"], supermarket_total_sales_week_C["week_sum"],marker="o", label = "C Naypyitaw")
+ax.set_xlabel(" Week")
+ax.set_ylabel(" Weekly Total (€)")
+ax.set_title(" Total Sales Per Week")
+leg = ax.legend()
+plt.show()
+
+fig, ax = plt.subplots()
+ax.plot(supermarket_total_sales_week_A["Week"], supermarket_total_sales_week_A["week_min"],marker="o",label="A Yangon")
+ax.plot(supermarket_total_sales_week_B["Week"], supermarket_total_sales_week_B["week_min"],marker="o", label="B Mandalay")
+ax.plot(supermarket_total_sales_week_C["Week"], supermarket_total_sales_week_C["week_min"],marker="o", label = "C Naypyitaw")
+ax.set_xlabel(" Week")
+ax.set_ylabel(" Weekly Min  (€)")
+ax.set_title(" Weekly Minimum Sales")
+leg = ax.legend()
+plt.show()
+
+fig, ax = plt.subplots()
+ax.plot(supermarket_total_sales_week_A["Week"], supermarket_total_sales_week_A["week_max"],marker="o",label="A Yangon")
+ax.plot(supermarket_total_sales_week_B["Week"], supermarket_total_sales_week_B["week_max"],marker="o", label="B Mandalay")
+ax.plot(supermarket_total_sales_week_C["Week"], supermarket_total_sales_week_C["week_max"],marker="o", label = "C Naypyitaw")
+ax.set_xlabel(" Week")
+ax.set_ylabel(" Weekly Max  (€)")
+ax.set_title(" Weekly Maximum Sales")
+leg = ax.legend()
+plt.show()
+
+
