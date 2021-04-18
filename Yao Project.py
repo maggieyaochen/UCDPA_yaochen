@@ -203,4 +203,4 @@ ax.set_title(" Weekly Maximum Sales")
 leg = ax.legend()
 plt.show()
 
-
+==========================
