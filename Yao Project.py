@@ -118,7 +118,7 @@ print(supermarket_total_sales.head())
 supermarket_total_sales_month=supermarket_total_sales.groupby(['Branch','Month','Week'])['Total'].sum()
 print(supermarket_total_sales_month)
 
-#To add column 'Mean' to supermarket_tatal_sales
+#To add column 'Mean' to supermarket_total_sales
 print(supermarket_total_sales.info())
 supermarket_total_sales['Mean']=supermarket_total_sales.groupby('Week')['Total'].mean()
 print(supermarket_total_sales.info())
@@ -188,7 +188,7 @@ ax.plot(supermarket_total_sales_week_A["Week"], supermarket_total_sales_week_A["
 ax.plot(supermarket_total_sales_week_B["Week"], supermarket_total_sales_week_B["week_min"],marker="o", label="B Mandalay")
 ax.plot(supermarket_total_sales_week_C["Week"], supermarket_total_sales_week_C["week_min"],marker="o", label = "C Naypyitaw")
 ax.set_xlabel(" Week")
-ax.set_ylabel(" Weekly Min  (€)")
+ax.set_ylabel(" Weekly Min (€)")
 ax.set_title(" Weekly Minimum Sales")
 leg = ax.legend()
 plt.show()
@@ -198,9 +198,42 @@ ax.plot(supermarket_total_sales_week_A["Week"], supermarket_total_sales_week_A["
 ax.plot(supermarket_total_sales_week_B["Week"], supermarket_total_sales_week_B["week_max"],marker="o", label="B Mandalay")
 ax.plot(supermarket_total_sales_week_C["Week"], supermarket_total_sales_week_C["week_max"],marker="o", label = "C Naypyitaw")
 ax.set_xlabel(" Week")
-ax.set_ylabel(" Weekly Max  (€)")
+ax.set_ylabel(" Weekly Max (€)")
 ax.set_title(" Weekly Maximum Sales")
 leg = ax.legend()
 plt.show()
 
+# To check which payment type is popular
+print(supermarket_sales.info())
+supermarket_payment=supermarket_sales.groupby('Payment')['gross income'].agg(['sum','count'])
+print(supermarket_payment)
+supermarket_payment.columns = ['Total_sum', 'Total_count']
+supermarket_payment = supermarket_payment.reset_index()
+print(supermarket_payment)
 
+fig, ax = plt.subplots()
+ax.bar(supermarket_payment["Payment"], supermarket_payment["Total_sum"])
+ax.set_ylabel(" Gross income (€)")
+ax.set_title(" Payment Type")
+plt.show()
+
+fig, ax = plt.subplots()
+ax.bar(supermarket_payment["Payment"], supermarket_payment["Total_count"])
+ax.set_ylabel(" Count")
+ax.set_title(" Payment Type")
+plt.show()
+
+# To find out most profitable by customer type
+supermarket_customer_type=supermarket_sales.groupby(['Branch','Customer type'])['gross income'].sum()
+print(supermarket_customer_type)
+supermarket_customer_type.columns = ['gross_sum']
+supermarket_customer_type = supermarket_customer_type.reset_index()
+print(supermarket_customer_type)
+
+sns.barplot(data = supermarket_customer_type
+            ,x = 'Branch'
+            ,y = 'gross income'
+            ,hue = 'Customer type'
+            ,ci = None
+            )
+plt.show()
