@@ -237,3 +237,5 @@ sns.barplot(data = supermarket_customer_type
             ,ci = None
             )
 plt.show()
+=====================
+=============================
