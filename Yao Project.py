@@ -262,4 +262,31 @@ print(supermarket_rating_less5)
 
 supermarket_rating_all=supermarket_rating.merge(supermarket_rating_less5, on = 'Product line')
 supermarket_rating_all['Percentage_Poor']=supermarket_rating_all['Rating_countPoor']/supermarket_rating_all['Rating_count']
+supermarket_rating_all['Percentage_Good'] = 1- supermarket_rating_all['Percentage_Poor']
 print(supermarket_rating_all.to_string())
+
+
+# View Rating Highest,Lowest, Average
+supermarket_rating_all.plot(
+    x="Product line", y=['Rating_Highest','Rating_mean','Rating_Lowest'], kind="bar",
+)
+plt.xticks(rotation = 360)
+plt.title("Customer Rating")
+plt.xlabel("Product Line")
+plt.ylabel("Rating")
+plt.show()
+
+# Customer satisfaction %
+supermarket_rating_all.plot(
+    x="Product line", y=['Percentage_Good','Percentage_Poor',], kind="bar",
+)
+plt.xticks(rotation = 360)
+plt.title("Customer Rating")
+plt.xlabel("Product Line")
+plt.ylabel("Rating % ")
+plt.show()
+
+supermarket_rating_percentage=supermarket_rating_all[['Product line','Percentage_Good','Percentage_Poor']]
+print(supermarket_rating_percentage)
+
+# View Peak time and Quiet time by sales transations
