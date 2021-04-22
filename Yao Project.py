@@ -242,36 +242,24 @@ plt.show()
 
 # Rating is higher than 8, find out invoice no.
 for index, row in supermarket_sales.iterrows():
-    print(row['Invoice ID'],row['Rating']<8)
+    print(row['Invoice ID'],row['Rating']>8)
 
 # Rating is lower than 5, find out invoice no.
 for index, row in supermarket_sales.iterrows():
     print(row['Invoice ID'],row['Rating']<5)
 
-# To view products by customer's rating
-supermarket_rating=supermarket_sales.groupby(['Product line'])['Rating'].count()
-print(supermarket_rating)
-supermarket_rating.columns = ['Rating_all']
+# To view customer satisfaction by rating
+supermarket_rating=supermarket_sales.groupby(['Product line'])['Rating'].agg(['count','mean','max'])
+supermarket_rating.columns = ['Rating_count','Rating_mean','Rating_Highest']
 supermarket_rating = supermarket_rating.reset_index()
 print(supermarket_rating)
 
 supermarket_rating_less5=supermarket_sales[supermarket_sales['Rating']<5]
-supermarket_rating_less5_product=supermarket_rating_less5.groupby(['Product line'])['Rating'].count()
-print(supermarket_rating_less5_product)
-supermarket_rating_less5_product.columns = ['Rating_poor']
-supermarket_rating_less5_product = supermarket_rating_less5_product.reset_index()
-print(supermarket_rating_less5_product)
-supermarket_rating_percentage=supermarket_rating_less5_product['Rating']/supermarket_rating['Rating']
-print(supermarket_rating_percentage)
+supermarket_rating_less5=supermarket_rating_less5.groupby(['Product line'])['Rating'].agg(['count','min'])
+supermarket_rating_less5.columns = ['Rating_countPoor','Rating_Lowest']
+supermarket_rating_less5 = supermarket_rating_less5.reset_index()
+print(supermarket_rating_less5)
 
-
-###### Customer's rating
-
-supermarket_rating_all = supermarket_sales[['Product line','gross income','Rating']]
-supermarket_rating_all['Rating']=supermarket_rating_all['Rating'].astype(int)
-supermarket_rating_all['Rating']=supermarket_rating_all['Rating'].astype(str)
-print(supermarket_rating_all)
-print(supermarket_rating_all.info())
-
-supermarket_rating_all=supermarket_rating_all(['Product line','Rating'])['gross income'].agg(['sum','mean'])
-print(supermarket_rating_all)
+supermarket_rating_all=supermarket_rating.merge(supermarket_rating_less5, on = 'Product line')
+supermarket_rating_all['Percentage_Poor']=supermarket_rating_all['Rating_countPoor']/supermarket_rating_all['Rating_count']
+print(supermarket_rating_all.to_string())
