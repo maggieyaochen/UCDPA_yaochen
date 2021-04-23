@@ -289,4 +289,20 @@ plt.show()
 supermarket_rating_percentage=supermarket_rating_all[['Product line','Percentage_Good','Percentage_Poor']]
 print(supermarket_rating_percentage)
 
-# View Peak time and Quiet time by sales transations
+# View Peak time by sales transactions
+supermarket_peaktime=supermarket_sales[['Branch','City','Time','Total']]
+supermarket_peaktime['Time']=pd.to_datetime(supermarket_peaktime['Time'])
+#supermarket_peaktime['Time_Hour']=supermarket_peaktime['Time'].dt.hour
+supermarket_peaktime=supermarket_peaktime.sort_values('Time')
+supermarket_peaktime['Time']=supermarket_peaktime['Time'].apply(str)
+print(supermarket_peaktime.info())
+sns.scatterplot(supermarket_peaktime['Time'], supermarket_peaktime['Total'])
+plt.title('Peak Hours')
+plt.xticks(rotation = 360)
+plt.show()
+
+supermarket_peaktime['Time_Hour']=supermarket_peaktime['Time'].dt.hour
+supermarket_peaktime_total=supermarket_peaktime.groupby('Time_Hour').agg(['sum','mean'])
+supermarket_peaktime_total.columns = ['Total_sum','Total_mean']
+supermarket_peaktime_total = supermarket_peaktime_total.reset_index()
+print(supermarket_peaktime_total)
