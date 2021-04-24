@@ -292,17 +292,62 @@ print(supermarket_rating_percentage)
 # View Peak time by sales transactions
 supermarket_peaktime=supermarket_sales[['Branch','City','Time','Total']]
 supermarket_peaktime['Time']=pd.to_datetime(supermarket_peaktime['Time'])
-#supermarket_peaktime['Time_Hour']=supermarket_peaktime['Time'].dt.hour
+supermarket_peaktime['Time_Hour']=supermarket_peaktime['Time'].dt.hour
 supermarket_peaktime=supermarket_peaktime.sort_values('Time')
 supermarket_peaktime['Time']=supermarket_peaktime['Time'].apply(str)
 print(supermarket_peaktime.info())
 sns.scatterplot(supermarket_peaktime['Time'], supermarket_peaktime['Total'])
 plt.title('Peak Hours')
-plt.xticks(rotation = 360)
 plt.show()
 
-supermarket_peaktime['Time_Hour']=supermarket_peaktime['Time'].dt.hour
+#View Sales total and average by hours
 supermarket_peaktime_total=supermarket_peaktime.groupby('Time_Hour').agg(['sum','mean'])
 supermarket_peaktime_total.columns = ['Total_sum','Total_mean']
 supermarket_peaktime_total = supermarket_peaktime_total.reset_index()
+supermarket_peaktime_total['Time_Hour']=supermarket_peaktime_total['Time_Hour'].apply(str)
 print(supermarket_peaktime_total)
+fig, ax = plt.subplots()
+ax.plot(supermarket_peaktime_total["Time_Hour"], supermarket_peaktime_total["Total_sum"],marker="o")
+ax.set_xlabel(" Time")
+ax.set_ylabel(" Sales total (€)")
+ax.set_title(" Total of Sales by Hours")
+plt.show()
+
+fig, ax = plt.subplots()
+ax.plot(supermarket_peaktime_total["Time_Hour"], supermarket_peaktime_total["Total_mean"],marker="o")
+ax.set_xlabel(" Time")
+ax.set_ylabel(" Sales mean (€)")
+ax.set_title(" Average of Sales by Hours")
+plt.show()
+
+# To find out the Key info by using a reusable code
+
+
+
+
+def my_function(*Totalsales):
+  print("The most profitable supermarket is " + Totalsales[2])
+
+my_function(" Branch A", "Branch B", "Branch C")
+
+###
+def my_function(Branch_A, Branch_B, Branch_C):
+  print("The most profitable supermarket is " + Branch_C)
+
+my_function( Branch_A = "Yangon", Branch_B = "Mandalay", Branch_C = "Naypyitaw ")
+
+###
+def my_function(Popular_product):
+  for x in Popular_product:
+    print(x)
+
+Popular_product = ['Electronic accessories','Fashion accessories','Food and beverages','Health and beauty','Home and lifestyle','Sports and travel']
+
+my_function(Popular_product)
+
+#####
+supermarket_sales['Total']=supermarket_sales['Total'].apply(int)
+supermarket_total=supermarket_sales['Total'].sum()
+print(supermarket_total)
+print("The total sales is " + str(supermarket_total) +" Euro.")
+
