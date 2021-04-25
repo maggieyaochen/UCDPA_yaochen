@@ -3,7 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-# Importing dataset : supermarket_sales - Sheet1.csv
+# Import dataset:supermarket_sales - Sheet1.csv
 supermarket_sales = pd.read_csv('supermarket_sales - Sheet1.csv')
 print(supermarket_sales.head())
 print(supermarket_sales.info())
@@ -17,7 +17,7 @@ print(supermarket_city)
 # To check if there is any missing value in the file
 print(supermarket_sales.isna().any())
 
-# Sorting Sales Totals by descending values to find out top 5 highest sales.
+# Sorting Total sales by descending values to find out top 5 highest sales.
 print(supermarket_sales.sort_values('Total', ascending = False).head().to_string())
 
 # Grouping the product line to see sales quantities in each city to find out min, max and sum
@@ -105,20 +105,21 @@ supermarket_total_sales = supermarket_sales[["Branch","City","Date","Time","Tota
 print(supermarket_total_sales.head())
 print(supermarket_total_sales.info())
 
+pd.options.mode.chained_assignment = None
 supermarket_total_sales['Date']=pd.to_datetime(supermarket_total_sales['Date'])
 supermarket_total_sales['Time']=pd.to_datetime(supermarket_total_sales['Time'])
 print(supermarket_total_sales.info())
 
 supermarket_total_sales['Year']=supermarket_total_sales['Date'].dt.year
 supermarket_total_sales['Month']=supermarket_total_sales['Date'].dt.month
-supermarket_total_sales['Week']=supermarket_total_sales['Date'].dt.week
+supermarket_total_sales['Week']=supermarket_total_sales['Date'].dt.isocalendar().week
 print(supermarket_total_sales.info())
 print(supermarket_total_sales.head())
 
 supermarket_total_sales_month=supermarket_total_sales.groupby(['Branch','Month','Week'])['Total'].sum()
 print(supermarket_total_sales_month)
 
-#To add column 'Mean' to supermarket_total_sales
+#Add column 'Mean' to supermarket_total_sales
 print(supermarket_total_sales.info())
 supermarket_total_sales['Mean']=supermarket_total_sales.groupby('Week')['Total'].mean()
 print(supermarket_total_sales.info())
@@ -260,6 +261,7 @@ supermarket_rating_less5.columns = ['Rating_countPoor','Rating_Lowest']
 supermarket_rating_less5 = supermarket_rating_less5.reset_index()
 print(supermarket_rating_less5)
 
+#Merge general rating and poor rating dataframes
 supermarket_rating_all=supermarket_rating.merge(supermarket_rating_less5, on = 'Product line')
 supermarket_rating_all['Percentage_Poor']=supermarket_rating_all['Rating_countPoor']/supermarket_rating_all['Rating_count']
 supermarket_rating_all['Percentage_Good'] = 1- supermarket_rating_all['Percentage_Poor']
@@ -321,33 +323,45 @@ ax.set_title(" Average of Sales by Hours")
 plt.show()
 
 # To find out the Key info by using a reusable code
+supermarket_sales['Total']=supermarket_sales['Total'].round(1)
+supermarket_total=supermarket_sales['Total'].sum()
+print("The total sales is " + str(supermarket_total) +" Euro.")
+
+supermarket_sales['gross income']=supermarket_sales['gross income'].round(1)
+supermarket_gross_income=supermarket_sales['gross income'].sum()
+print("The gross income is " + str(supermarket_gross_income) + " Euro.")
+
+supermarket_sales['cogs']=supermarket_sales['cogs'].round(1)
+supermarket_cogs=supermarket_sales['cogs'].sum()
+print("The cost of goods sold is " + str(supermarket_gross_income) + " Euro.")
+
+# Function to return the square of a number
+def totalsales(n):
+
+    totalsales = n *(1+0.02)
+    print ("%d totalsales is %d." % (n, totalsales))
+    return totalsales
+x = totalsales("supermarket_total")
+print(x)
 
 
+
+
+
+
+
+def my_function(Branch_A, Branch_B, Branch_C):
+  print("The most profitable supermarket is " + Branch_C)
+
+my_function( Branch_A = "Branch A in Yangon.", Branch_B = "Branch B in Mandalay.", Branch_C = "Branch C in Naypyitaw. ")
 
 
 def my_function(*Totalsales):
   print("The most profitable supermarket is " + Totalsales[2])
 
-my_function(" Branch A", "Branch B", "Branch C")
+my_function(" Branch A ", "Branch B", "Branch C")
 
-###
-def my_function(Branch_A, Branch_B, Branch_C):
-  print("The most profitable supermarket is " + Branch_C)
 
-my_function( Branch_A = "Yangon", Branch_B = "Mandalay", Branch_C = "Naypyitaw ")
 
-###
-def my_function(Popular_product):
-  for x in Popular_product:
-    print(x)
 
-Popular_product = ['Electronic accessories','Fashion accessories','Food and beverages','Health and beauty','Home and lifestyle','Sports and travel']
-
-my_function(Popular_product)
-
-#####
-supermarket_sales['Total']=supermarket_sales['Total'].apply(int)
-supermarket_total=supermarket_sales['Total'].sum()
-print(supermarket_total)
-print("The total sales is " + str(supermarket_total) +" Euro.")
 
