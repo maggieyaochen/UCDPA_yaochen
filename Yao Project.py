@@ -2,6 +2,7 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
+import numpy_financial as npf
 
 # Import dataset:supermarket_sales - Sheet1.csv
 supermarket_sales = pd.read_csv('supermarket_sales - Sheet1.csv')
@@ -20,7 +21,7 @@ print(supermarket_sales.isna().any())
 # Sorting Total sales by descending values to find out top 5 highest sales.
 print(supermarket_sales.sort_values('Total', ascending = False).head().to_string())
 
-# Grouping the product line to see sales quantities in each city to find out min, max and sum
+# Grouping the product line by sales quantities to find out min, max and sum
 supermarket_Yangon=supermarket_sales[supermarket_sales["City"]=="Yangon"]
 print(supermarket_Yangon.info())
 print(supermarket_Yangon.groupby('Product line')["Quantity"].agg([min,max,sum]))
@@ -335,31 +336,72 @@ supermarket_sales['cogs']=supermarket_sales['cogs'].round(1)
 supermarket_cogs=supermarket_sales['cogs'].sum()
 print("The cost of goods sold is " + str(supermarket_gross_income) + " Euro.")
 
-# Function to return the square of a number
-def totalsales(n):
-
-    totalsales = n *(1+0.02)
-    print ("%d totalsales is %d." % (n, totalsales))
-    return totalsales
-x = totalsales("supermarket_total")
-print(x)
+#def my_function(Branch_A, Branch_B, Branch_C):
+  #  print("The most profitable supermarket is " + Branch_C)
+  #    my_function( Branch_A = "Branch A in Yangon.", Branch_B = "Branch B in Mandalay.", Branch_C = "Branch C in Naypyitaw. ")
 
 
+# Using reused code to calculate annual forecast based on quarter total sales amount
+supermarket_totalsales_branch_quarter = supermarket_sales.groupby('Branch')['Total'].sum()
+supermarket_totalsales_branch_quarter = supermarket_totalsales_branch_quarter.reset_index()
+print(supermarket_totalsales_branch_quarter)
 
+def totalsales_quarter(n):
 
+    totalsales_year = n * 4
+    print ("The annual total sales forecast is %d." %(totalsales_year))
+    return totalsales_year
+length = (supermarket_totalsales_branch_quarter.shape[0])
+list = []
 
+for i in range(0,length):
 
+    if i==0:
+      print("Branch A")
+    if i==1:
+      print("Branch B")
+    if i==2:
+      print("Branch C")
+    x = totalsales_quarter(supermarket_totalsales_branch_quarter.iloc[i,1])
+   # print(x)
+    list.append(x)
 
-def my_function(Branch_A, Branch_B, Branch_C):
-  print("The most profitable supermarket is " + Branch_C)
+#print(list)
 
-my_function( Branch_A = "Branch A in Yangon.", Branch_B = "Branch B in Mandalay.", Branch_C = "Branch C in Naypyitaw. ")
+# Print highest total sales forecast
+print(max(list))
 
+index = list.index(max(list))
+if index == 0:
+    print("The highest total sales of forecast is Branch A.")
+    print(max(list))
+if index == 1:
+    print("The highest total sales of forecast is Branch B.")
+    print(max(list))
+if index == 2:
+    print("The highest total sales of forecast is Branch C.")
+    print(max(list))
 
-def my_function(*Totalsales):
-  print("The most profitable supermarket is " + Totalsales[2])
+# Expansion plan in branch C as this is most profitable supermarket
+Branch_C_year1_cashflow = max(list)
+Branch_C_5years_cashflow=([(Branch_C_year1_cashflow),(Branch_C_year1_cashflow*1.05),(Branch_C_year1_cashflow*(1.05**2)),(Branch_C_year1_cashflow*(1.05**3)),(Branch_C_year1_cashflow*(1.05**5))])
 
-my_function(" Branch A ", "Branch B", "Branch C")
+print(Branch_C_5years_cashflow)
+
+# Calculate NPV if rate is 3%
+Branch_C_5years_cashflow_npv=npf.npv(rate=0.03, values=Branch_C_5years_cashflow)
+print("The forecast net present value in Branch C is €"+ str(round(Branch_C_5years_cashflow_npv, 2)))
+
+# Investment 1 : Invest 1 million in Branch C for 5 years at rate 3%
+Investment1 = ([-1000000,200000,350000,450000,650000])
+Branch_C_5years_investment1_npv=npf.npv(rate=0.03, values=Investment1)
+print("The investment 1 net present value in Branch C is €"+ str(round(Branch_C_5years_investment1_npv, 2)))
+
+# Investment 2 : Invest €500,000 in Branch C for 3 years at rate 3%
+Investment2 = ([-500000,100000,250000,350000])
+Branch_C_5years_investment2_npv=npf.npv(rate=0.03, values=Investment2)
+print("The investment 2 net present value in Branch C is €"+ str(round(Branch_C_5years_investment2_npv, 2)))
+
 
 
 
