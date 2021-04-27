@@ -9,34 +9,31 @@ supermarket_sales = pd.read_csv('supermarket_sales - Sheet1.csv')
 print(supermarket_sales.head())
 print(supermarket_sales.info())
 
-# Using dropping duplicates to check branches and cities
+# Using drop duplicates to check branches and cities
 supermarket_city = supermarket_sales[["City",'Branch']]
-print(supermarket_city)
 supermarket_city =supermarket_city.drop_duplicates(subset=["City"])
 print(supermarket_city)
 
-# To check if there is any missing value in the file
+# Check if there is any missing value in the file
 print(supermarket_sales.isna().any())
 
 # Sorting Total sales by descending values to find out top 5 highest sales.
 print(supermarket_sales.sort_values('Total', ascending = False).head().to_string())
 
+# View most popular product by quantities sold
 # Grouping the product line by sales quantities to find out min, max and sum
 supermarket_Yangon=supermarket_sales[supermarket_sales["City"]=="Yangon"]
-print(supermarket_Yangon.info())
 print(supermarket_Yangon.groupby('Product line')["Quantity"].agg([min,max,sum]))
 
 supermarket_Mandalay=supermarket_sales[supermarket_sales["City"] == "Mandalay"]
-print(supermarket_Mandalay.info())
 print(supermarket_Mandalay.groupby('Product line')["Quantity"].agg([min,max,sum]))
 
 supermarket_Naypyitaw=supermarket_sales[supermarket_sales["City"] == "Naypyitaw"]
-print(supermarket_Mandalay.info())
 print(supermarket_Naypyitaw.groupby('Product line')["Quantity"].agg([min,max,sum]))
 
 print(supermarket_sales.groupby('Product line')["Quantity"].agg([min,max,sum]))
 
-# Create a new list of dicts to visualize the data
+# Create a new list of dicts based on above info to visualize the data
 data = [['Yangon',322,263,313,257,371,333],
         ['Mandalay',316,297,270,320,295,322],
         ['Naypyitaw',333,342,369,277,245,265],
@@ -45,9 +42,7 @@ columns = ['City','Electronic accessories','Fashion accessories','Food and bever
 supermarket_quantity = pd.DataFrame(data=data, columns=columns)
 print(supermarket_quantity.to_string())
 
-print(supermarket_quantity.info())
-
-# To view supermarket_quantity in a bar chart
+# View supermarket_quantity in a bar chart
 supermarket_quantity.plot(
     x="City", y=['Electronic accessories','Fashion accessories','Food and beverages','Health and beauty','Home and lifestyle','Sports and travel'], kind="bar",
 )
@@ -57,16 +52,28 @@ plt.xlabel("City")
 plt.ylabel("Quantities")
 
 
-# To view gross income by gender
-print(supermarket_sales.head())
-supermarket_gender=supermarket_sales.groupby("Gender")["gross income"].sum()
-print(supermarket_gender)
+# View gross income by gender
+supermarket_Female=supermarket_sales[supermarket_sales["Gender"]=="Female"]
+supermarket_Female=supermarket_Female["gross income"].sum()
+print(supermarket_Female)
 
-Total_gross_income=7994+7384
-Female=7994/Total_gross_income
-Male=7384/Total_gross_income
-print(Female)
-print(Male)
+supermarket_Male=supermarket_sales[supermarket_sales["Gender"]=="Male"]
+supermarket_Male=supermarket_Male["gross income"].sum()
+print(supermarket_Male)
+
+supermarket_sales_grossincome=supermarket_sales["gross income"].sum()
+print(supermarket_sales_grossincome)
+
+Percentage_Female=supermarket_Female/supermarket_sales_grossincome
+print(Percentage_Female)
+Percentage_Male=supermarket_Male/supermarket_sales_grossincome
+print(Percentage_Male)
+
+data=[['Female',supermarket_Female,Percentage_Female],
+      ['Male',supermarket_Male,Percentage_Male]]
+columns=['Gender','Gross Income','Percentage']
+Grossincome_Gender=pd.DataFrame(data=data,columns=columns)
+print(Grossincome_Gender)
 
 # To view gross income by gender and product line
 supermarket_gender=supermarket_sales.groupby(["Gender","Product line"])["gross income"].sum()
@@ -121,10 +128,10 @@ supermarket_total_sales_month=supermarket_total_sales.groupby(['Branch','Month',
 print(supermarket_total_sales_month)
 
 #Add column 'Mean' to supermarket_total_sales
-print(supermarket_total_sales.info())
+#print(supermarket_total_sales.info())
 supermarket_total_sales['Mean']=supermarket_total_sales.groupby('Week')['Total'].mean()
 print(supermarket_total_sales.info())
-print(supermarket_total_sales.head())
+#print(supermarket_total_sales.head())
 print(supermarket_total_sales.isna().any())
 supermarket_total_sales=supermarket_total_sales.sort_values('Total')
 print(supermarket_total_sales)
@@ -140,7 +147,7 @@ print(supermarket_total_sales.info())
 print(supermarket_total_sales.isna().sum())
 print(supermarket_total_sales.head())
 
-# Grouping total sales by branch and city to get min,max,sun,mean
+# Grouping total sales by branch to get min,max,sun,mean
 
 supermarket_total_sales_week=supermarket_total_sales.groupby(['Branch','Week'])['Total'].agg(['min', 'max','sum','mean'])
 print(supermarket_total_sales_week.info())
@@ -205,7 +212,7 @@ ax.set_title(" Weekly Maximum Sales")
 leg = ax.legend()
 plt.show()
 
-# To check which payment type is popular
+# To view popular payment type
 print(supermarket_sales.info())
 supermarket_payment=supermarket_sales.groupby('Payment')['gross income'].agg(['sum','count'])
 print(supermarket_payment)
@@ -323,7 +330,7 @@ ax.set_ylabel(" Sales mean (€)")
 ax.set_title(" Average of Sales by Hours")
 plt.show()
 
-# To find out the Key info by using a reusable code
+# To find out the Key info
 supermarket_sales['Total']=supermarket_sales['Total'].round(1)
 supermarket_total=supermarket_sales['Total'].sum()
 print("The total sales is " + str(supermarket_total) +" Euro.")
@@ -336,50 +343,49 @@ supermarket_sales['cogs']=supermarket_sales['cogs'].round(1)
 supermarket_cogs=supermarket_sales['cogs'].sum()
 print("The cost of goods sold is " + str(supermarket_gross_income) + " Euro.")
 
-#def my_function(Branch_A, Branch_B, Branch_C):
-  #  print("The most profitable supermarket is " + Branch_C)
-  #    my_function( Branch_A = "Branch A in Yangon.", Branch_B = "Branch B in Mandalay.", Branch_C = "Branch C in Naypyitaw. ")
-
-
 # Using reused code to calculate annual forecast based on quarter total sales amount
 supermarket_totalsales_branch_quarter = supermarket_sales.groupby('Branch')['Total'].sum()
 supermarket_totalsales_branch_quarter = supermarket_totalsales_branch_quarter.reset_index()
 print(supermarket_totalsales_branch_quarter)
 
+def format_float(n):
+
+    formatted_float = "€{:,.2f}".format(n)
+    return formatted_float
+
 def totalsales_quarter(n):
 
     totalsales_year = n * 4
-    print ("The annual total sales forecast is %d." %(totalsales_year))
+    #print ("The annual total sales forecast is %d." %(totalsales_year))
     return totalsales_year
 length = (supermarket_totalsales_branch_quarter.shape[0])
 list = []
 
 for i in range(0,length):
+    x = totalsales_quarter(supermarket_totalsales_branch_quarter.iloc[i, 1])
+    if i == 0:
+        print("Branch A annual forecast sales is " + format_float(x))
+    if i == 1:
+        print("Branch B annual forecast sales is " + format_float(x))
+    if i == 2:
+        print("Branch C annual forecast sales is " + format_float(x))
 
-    if i==0:
-      print("Branch A")
-    if i==1:
-      print("Branch B")
-    if i==2:
-      print("Branch C")
-    x = totalsales_quarter(supermarket_totalsales_branch_quarter.iloc[i,1])
    # print(x)
     list.append(x)
 
-#print(list)
 
-# Print highest total sales forecast
+# To find out the highest total sales forecast
 print(max(list))
 
 index = list.index(max(list))
 if index == 0:
-    print("The highest total sales of forecast is Branch A.")
-    print(max(list))
+    print("The highest total sales forecast is Branch A "+format_float(max(list)))
+
 if index == 1:
-    print("The highest total sales of forecast is Branch B.")
-    print(max(list))
+    print("The highest total sales forecast is Branch B "+format_float(max(list)))
+
 if index == 2:
-    print("The highest total sales of forecast is Branch C.")
+    print("The highest total sales forecast is Branch C "+format_float(max(list)))
     print(max(list))
 
 # Expansion plan in branch C as this is most profitable supermarket
@@ -387,6 +393,11 @@ Branch_C_year1_cashflow = max(list)
 Branch_C_5years_cashflow=([(Branch_C_year1_cashflow),(Branch_C_year1_cashflow*1.05),(Branch_C_year1_cashflow*(1.05**2)),(Branch_C_year1_cashflow*(1.05**3)),(Branch_C_year1_cashflow*(1.05**5))])
 
 print(Branch_C_5years_cashflow)
+
+for i in range(0,5):
+  year=str(i+1)
+  print("year "+year+ " "+ format_float(Branch_C_5years_cashflow[i]))
+
 
 # Calculate NPV if rate is 3%
 Branch_C_5years_cashflow_npv=npf.npv(rate=0.03, values=Branch_C_5years_cashflow)
@@ -401,9 +412,6 @@ print("The investment 1 net present value in Branch C is €"+ str(round(Branch_
 Investment2 = ([-500000,100000,250000,350000])
 Branch_C_5years_investment2_npv=npf.npv(rate=0.03, values=Investment2)
 print("The investment 2 net present value in Branch C is €"+ str(round(Branch_C_5years_investment2_npv, 2)))
-
-
-
 
 
 
