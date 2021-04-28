@@ -33,7 +33,7 @@ print(supermarket_Naypyitaw.groupby('Product line')["Quantity"].agg([min,max,sum
 
 print(supermarket_sales.groupby('Product line')["Quantity"].agg([min,max,sum]))
 
-# Create a new list of dicts based on above info to visualize the data
+# Create a dataframe based on above info to visualize the data
 data = [['Yangon',322,263,313,257,371,333],
         ['Mandalay',316,297,270,320,295,322],
         ['Naypyitaw',333,342,369,277,245,265],
@@ -75,14 +75,14 @@ columns=['Gender','Gross Income','Percentage']
 Grossincome_Gender=pd.DataFrame(data=data,columns=columns)
 print(Grossincome_Gender)
 
-# To view gross income by gender and product line
+# View gross income by gender and product line
 supermarket_gender=supermarket_sales.groupby(["Gender","Product line"])["gross income"].sum()
 print(supermarket_gender)
 
 supermarket_product=supermarket_sales.groupby(["Product line"])["gross income"].sum()
 print(supermarket_product)
 
-# To view gross income % by gender for each product line
+# View gross income % by gender for each product line
 supermarket_gender=pd.DataFrame({
     "Female":[1290,1449,1579,883,1430,1360],
     "Male":[1296,1136,1093,1458,1134,1364],
@@ -136,9 +136,7 @@ print(supermarket_total_sales.isna().any())
 supermarket_total_sales=supermarket_total_sales.sort_values('Total')
 print(supermarket_total_sales)
 
-# Drop 'Date' and 'time' to see if still missing value
-supermarket_total_sales=supermarket_total_sales.drop(['Date','Time'], axis='columns', inplace=False)
-print(supermarket_total_sales.info())
+# To check how many missing values
 print(supermarket_total_sales.isna().sum())
 
 # Fill missing value with average mean value
@@ -212,7 +210,7 @@ ax.set_title(" Weekly Maximum Sales")
 leg = ax.legend()
 plt.show()
 
-# To view popular payment type
+# View popular payment type
 print(supermarket_sales.info())
 supermarket_payment=supermarket_sales.groupby('Payment')['gross income'].agg(['sum','count'])
 print(supermarket_payment)
@@ -232,7 +230,7 @@ ax.set_ylabel(" Count")
 ax.set_title(" Payment Type")
 plt.show()
 
-# To find out most profitable by customer type
+# To find out most profitable customer type
 supermarket_customer_type=supermarket_sales.groupby(['Branch','Customer type'])['gross income'].sum()
 print(supermarket_customer_type)
 supermarket_customer_type.columns = ['gross_sum']
@@ -364,11 +362,11 @@ list = []
 for i in range(0,length):
     x = totalsales_quarter(supermarket_totalsales_branch_quarter.iloc[i, 1])
     if i == 0:
-        print("Branch A annual forecast sales is " + format_float(x))
+        print("Branch A annual sales forecast is " + format_float(x))
     if i == 1:
-        print("Branch B annual forecast sales is " + format_float(x))
+        print("Branch B annual sales forecast is " + format_float(x))
     if i == 2:
-        print("Branch C annual forecast sales is " + format_float(x))
+        print("Branch C annual sales forecast is " + format_float(x))
 
    # print(x)
     list.append(x)
@@ -400,15 +398,17 @@ for i in range(0,5):
 
 
 # Calculate NPV if rate is 3%
+
+# No investment, based on year 1 sales forecast, sales grows 5% each year, at inflation rate 3%
 Branch_C_5years_cashflow_npv=npf.npv(rate=0.03, values=Branch_C_5years_cashflow)
 print("The forecast net present value in Branch C is €"+ str(round(Branch_C_5years_cashflow_npv, 2)))
 
-# Investment 1 : Invest 1 million in Branch C for 5 years at rate 3%
+# Investment 1 : Invest 1 million in Branch C for 5 years at inflation rate 3%
 Investment1 = ([-1000000,200000,350000,450000,650000])
 Branch_C_5years_investment1_npv=npf.npv(rate=0.03, values=Investment1)
 print("The investment 1 net present value in Branch C is €"+ str(round(Branch_C_5years_investment1_npv, 2)))
 
-# Investment 2 : Invest €500,000 in Branch C for 3 years at rate 3%
+# Investment 2 : Invest €500,000 in Branch C for 4 years at inflation rate 3%
 Investment2 = ([-500000,100000,250000,350000])
 Branch_C_5years_investment2_npv=npf.npv(rate=0.03, values=Investment2)
 print("The investment 2 net present value in Branch C is €"+ str(round(Branch_C_5years_investment2_npv, 2)))
